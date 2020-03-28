@@ -1,12 +1,14 @@
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
+import java.io.File;
 import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
+import java.util.Scanner;
 
 /**
      * GuiTemplate.java
@@ -82,7 +84,7 @@ public class GuiCA1D extends Frame implements ActionListener, FocusListener {
         Dimension navbar_dimension = new Dimension(200,40);
         Map<String, String[] > menu_items = new HashMap<>();
 
-        menu_items.put("File", new String[]{"Item menu 1", "Item menu 2"});
+        menu_items.put("File", new String[]{"Open File", "Save File"});
         menu_items.put("Help", new String[]{"Help message"});
         menu_items.put("About", new String[]{"About message"});
 
@@ -94,6 +96,9 @@ public class GuiCA1D extends Frame implements ActionListener, FocusListener {
         nav_bar.add(Box.createHorizontalGlue());
         nav_bar.add(menus.get("Help"));
         nav_bar.add(menus.get("About"));
+        fc = new JFileChooser();
+        fc.setCurrentDirectory(new File("."));
+        log = new JTextArea(5,20);
 
         return nav_bar;
     }
@@ -266,13 +271,44 @@ public class GuiCA1D extends Frame implements ActionListener, FocusListener {
 
     }
 
-    private static  void createAndShowGUI(){
+    private static  String line ;
+    private static JFileChooser fc;
+    private static JTextArea log;
+    private static JPanel canvas;
+    private static JTextArea input_area;
+    private static JTextPane output_area;
+    private static  JSplitPane encryption_area;
+
+
+    private static JPanel createEncryptionArea(){
+        JPanel canvas = new JPanel();
+        input_area = new JTextArea("Write here a message to be encrypted");
+        output_area = new JTextPane();
+
+        input_area.setPreferredSize(new Dimension(700, 920));
+        output_area.setPreferredSize(new Dimension(700, 920));
+
+        encryption_area = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, input_area, output_area);
+
+        canvas.setBorder(BorderFactory.createCompoundBorder(
+                BorderFactory.createTitledBorder("Encrypt"),
+                BorderFactory.createEmptyBorder(5,5,5,5)));
+
+        canvas.setPreferredSize(new Dimension(1600, 1600));
+        canvas.setMinimumSize(new Dimension(1600, 1600));
+        canvas.add(encryption_area);
+
+        return canvas;
+    }
+
+
+    private static void createAndShowGUI(){
 
         chooseInputVariables(1,1,2);
         initializeButtonNames();
         initializeInputTextFieldsAndLabels();
 
-        JFrame frame = new JFrame("CA1D");
+        JFrame frame = new JFrame("Cryptography cellular automata");
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.setMinimumSize(new Dimension(500,500));
         frame.setJMenuBar(new GuiCA1D().createNavBar());
@@ -284,8 +320,38 @@ public class GuiCA1D extends Frame implements ActionListener, FocusListener {
         canvas_template.setDoubleBuffered(false);
         canvas_template.setPreferredSize(new Dimension(1000, 1000));
 
+//        line = new String();
+//        Scanner cout = null;
+//        int returnVal = fc.showOpenDialog(fc);
+//
+//        if(returnVal ==JFileChooser.APPROVE_OPTION)
+//        {
+//
+//            File file = fc.getSelectedFile();
+//            log.append("Opening: "+file.getName()+"."+'\n');
+//
+//            try
+//            {
+//                cout = new Scanner(file);
+//                while (cout.hasNextLine()){
+//                    line += cout.nextLine();     // Guardamos la linea en un String
+//                    System.out.println(line);}
+//            }catch(Exception ex){}
+//        }
+//
+//        else
+//        {
+//            log.append("Open command cancelled by user."+'\n');
+//
+//        }
+//
+//        log.setCaretPosition(log.getDocument().getLength());
+
+        canvas =createEncryptionArea();
+
         JSplitPane buttons = new GuiCA1D().createGuiPanels();
-        JSplitPane window = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, canvas_template, buttons);
+        JSplitPane window = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT,canvas, buttons);
+        window.setOneTouchExpandable(true);
         window.setOpaque(true);
         window.setOneTouchExpandable(true);
         frame.pack();
