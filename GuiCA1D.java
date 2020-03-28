@@ -271,7 +271,7 @@ public class GuiCA1D extends Frame implements ActionListener, FocusListener {
 
     }
 
-    private static  String line ;
+    private static  String input_loaded_text;
     private static JFileChooser fc;
     private static JTextArea log;
     private static JPanel canvas;
@@ -280,12 +280,14 @@ public class GuiCA1D extends Frame implements ActionListener, FocusListener {
     private static  JSplitPane encryption_area;
 
 
-    private static JPanel createEncryptionArea(){
+    private static JPanel createEncryptionArea(String input_area_text){
         JPanel canvas = new JPanel();
-        input_area = new JTextArea("Write here a message to be encrypted");
+        input_area = new JTextArea(input_area_text);
         output_area = new JTextPane();
 
         input_area.setPreferredSize(new Dimension(700, 920));
+        input_area.setMaximumSize(new Dimension(700, 920));
+
         output_area.setPreferredSize(new Dimension(700, 920));
 
         encryption_area = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, input_area, output_area);
@@ -320,34 +322,8 @@ public class GuiCA1D extends Frame implements ActionListener, FocusListener {
         canvas_template.setDoubleBuffered(false);
         canvas_template.setPreferredSize(new Dimension(1000, 1000));
 
-//        line = new String();
-//        Scanner cout = null;
-//        int returnVal = fc.showOpenDialog(fc);
-//
-//        if(returnVal ==JFileChooser.APPROVE_OPTION)
-//        {
-//
-//            File file = fc.getSelectedFile();
-//            log.append("Opening: "+file.getName()+"."+'\n');
-//
-//            try
-//            {
-//                cout = new Scanner(file);
-//                while (cout.hasNextLine()){
-//                    line += cout.nextLine();     // Guardamos la linea en un String
-//                    System.out.println(line);}
-//            }catch(Exception ex){}
-//        }
-//
-//        else
-//        {
-//            log.append("Open command cancelled by user."+'\n');
-//
-//        }
-//
-//        log.setCaretPosition(log.getDocument().getLength());
 
-        canvas =createEncryptionArea();
+        canvas =createEncryptionArea("Write here a message to be encrypted");
 
         JSplitPane buttons = new GuiCA1D().createGuiPanels();
         JSplitPane window = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT,canvas, buttons);
@@ -411,12 +387,36 @@ public class GuiCA1D extends Frame implements ActionListener, FocusListener {
     public void actionPerformed( ActionEvent e) {
 
         if(e.getSource() == nav_bar.getMenu(0).getItem(0)) {
-//      frame.remove(window);
-            value = 2;
-            deleteCanvasLabels(input_variables_labels);
-            MainCanvas.task.initializer(cells_number, generations, states_number,
-                    neighborhood_range, transition_function, seed, cfrontier , initializer_mode, cell_spatial_entropy);
-            canvas_template.updateCanvas();
+            input_loaded_text = new String();
+            Scanner cout = null;
+            int returnVal = fc.showOpenDialog(fc);
+
+            if(returnVal ==JFileChooser.APPROVE_OPTION)
+            {
+
+                File file = fc.getSelectedFile();
+                log.append("Opening: "+file.getName()+"."+'\n');
+
+                try
+                {
+                    cout = new Scanner(file);
+                    while (cout.hasNextLine()){
+                        input_loaded_text += cout.nextLine();     // Guardamos la linea en un String
+                        System.out.println(input_loaded_text);}
+                }catch(Exception ex){}
+            }
+
+            else
+            {
+                log.append("Open command cancelled by user."+'\n');
+
+            }
+
+            log.setCaretPosition(log.getDocument().getLength());
+
+            input_area.setText(input_loaded_text);
+            output_area.setText("");
+
         }
 
         if(e.getSource() == nav_bar.getMenu(0).getItem(1)) {
