@@ -33,10 +33,8 @@ public class CellularAutomata1D implements Runnable
     private static double temporal_entropy;
     private static int[] temporal_entropy_counter;
     public static MainCanvas canvasTemplateRef;
-    public static AnalyticsMultiChart population_chart_ref;
     public int[][] getData() { return matrix; }
     public void plug(MainCanvas ref) { canvasTemplateRef = ref; }
-    public void plugPopulationChart(AnalyticsMultiChart ref) { population_chart_ref = ref;}
     public static int entropy_cell;
 
     private static int width, height;
@@ -103,7 +101,6 @@ public class CellularAutomata1D implements Runnable
                     hamming.add((double)hamming_distance_counter.intValue());
                     hamming_distance_counter = new AtomicInteger(0);
                     spatial_entropy.add(computeEntropy(spatial_entropy_counter));
-                    CellularAutomata1D.population_chart_ref.plot();
                 }
 
                 if(barrier.getParties() == 0)

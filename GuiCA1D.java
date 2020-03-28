@@ -33,9 +33,6 @@ public class GuiCA1D extends Frame implements ActionListener, FocusListener {
     private static String initializer_mode = "Basic";
 
 
-
-
-
     private JMenuBar createTopBar(Color color, Dimension dimension) {
 
         JMenuBar top_bar = new JMenuBar();
@@ -86,7 +83,6 @@ public class GuiCA1D extends Frame implements ActionListener, FocusListener {
         Map<String, String[] > menu_items = new HashMap<>();
 
         menu_items.put("File", new String[]{"Item menu 1", "Item menu 2"});
-        menu_items.put("Plot", new String[]{"Population chart"});
         menu_items.put("Help", new String[]{"Help message"});
         menu_items.put("About", new String[]{"About message"});
 
@@ -95,7 +91,6 @@ public class GuiCA1D extends Frame implements ActionListener, FocusListener {
         Map<String, JMenu> menus = createMenusItems(menu_items, menu_font_color, menu_font);
 
         nav_bar.add(menus.get("File"));
-        nav_bar.add(menus.get("Plot"));
         nav_bar.add(Box.createHorizontalGlue());
         nav_bar.add(menus.get("Help"));
         nav_bar.add(menus.get("About"));
@@ -103,8 +98,7 @@ public class GuiCA1D extends Frame implements ActionListener, FocusListener {
         return nav_bar;
     }
 
-    String [] round_buttons_options = {"No", "Yes"};
-    ButtonGroup cilindric_frontier = new ButtonGroup();
+//
     Map<String, JRadioButton> cilindric_frontier_buttons = new HashMap<>();
 
     private Map<String, JRadioButton> createRadioButton(String[] round_buttons_options, ButtonGroup group){
@@ -182,11 +176,11 @@ public class GuiCA1D extends Frame implements ActionListener, FocusListener {
     private static void initializeInputTextFieldsAndLabels(){
 //        textfields_and_labels.put("Cells number (width): ", "300");//2
 //        textfields_and_labels.put("Generations: ", "600");//3
-        textfields_and_labels.put("States number: ", "2");//1
-        textfields_and_labels.put("Neighborhood Range: ", "1");//4
-        textfields_and_labels.put("Transition function: ", "90");//5
-        textfields_and_labels.put("Seed: ", "1"); //0
-        textfields_and_labels.put("Cell (temporal entropy): ","300");
+        textfields_and_labels.put("CA-Rule: ", "90");//1
+//        textfields_and_labels.put("Neighborhood Range: ", "1");//4
+//        textfields_and_labels.put("Transition function: ", "90");//5
+//        textfields_and_labels.put("Seed: ", "1"); //0
+//        textfields_and_labels.put("Cell (temporal entropy): ","300");
 
 
         combobox_labels[0].setLabelFor(generator_list_combo_box);
@@ -215,7 +209,7 @@ public class GuiCA1D extends Frame implements ActionListener, FocusListener {
         input_variables_labels = (JLabel[]) labels_and_textfields_list[0];
         input_variables_textfields = (JTextField[]) labels_and_textfields_list[1];
 
-        cilindric_frontier_buttons = createRadioButton(round_buttons_options,cilindric_frontier);
+//        cilindric_frontier_buttons = createRadioButton(round_buttons_options,cilindric_frontier);
 
         addLabelTextRows(input_variables_labels,input_variables_textfields, combobox_labels, combo_box_list,
                 radio_button_labels, cilindric_frontier_buttons,
@@ -268,37 +262,7 @@ public class GuiCA1D extends Frame implements ActionListener, FocusListener {
             container.add(textFields[i], c);
         }
 
-        for(int i =0; i < num_labels_combobox; i ++) {
-            GuiCA1D.combobox_labels[i].setFont(new Font(null, Font.PLAIN,20));
-            combo_box_list[i].setFont(new Font(null, Font.PLAIN,20));
-            ((JLabel)combo_box_list[i].getRenderer()).setHorizontalAlignment(JLabel.CENTER);
-            c.gridwidth = GridBagConstraints.RELATIVE; //next-to-last
-            c.fill = GridBagConstraints.NONE;      //reset to default
-            c.weightx = 1.0;                       //reset to default
-            container.add(GuiCA1D.combobox_labels[i], c);
 
-            c.gridwidth = GridBagConstraints.REMAINDER;     //end row
-            c.fill = GridBagConstraints.NONE;
-            c.weightx = 1.0;
-            container.add(combo_box_list[i], c);
-        }
-
-        GuiCA1D.radio_button_labels[0].setFont(new Font(null, Font.PLAIN,20));
-        c.gridwidth = GridBagConstraints.RELATIVE; //next-to-last
-        c.fill = GridBagConstraints.NONE;      //reset to default
-        c.weightx = 1.0;                       //reset to default
-        container.add(GuiCA1D.radio_button_labels[0], c);
-        c.gridwidth = GridBagConstraints.BASELINE_TRAILING;
-        c.fill = GridBagConstraints.REMAINDER;
-        c.weightx = 0;
-
-        Box horizontal = Box.createHorizontalBox();
-
-
-        for(Map.Entry<String,JRadioButton> button: radiobutton.entrySet()){
-            horizontal.add(button.getValue());
-        }
-        container.add(horizontal,c);
 
     }
 
@@ -351,7 +315,6 @@ public class GuiCA1D extends Frame implements ActionListener, FocusListener {
 
     private static JLabel label_string_var_value;
     private static int value = 0;
-    private static AnalyticsMultiChart population_chart;
 
     public void showURI(String uri){
         if (Desktop.isDesktopSupported() && Desktop.getDesktop().isSupported(Desktop.Action.BROWSE)) {
@@ -374,9 +337,9 @@ public class GuiCA1D extends Frame implements ActionListener, FocusListener {
     private static int neighborhood_range = 1;
     private static int transition_function = 90;
     private static int cfrontier = 0;
-    private static int cells_number = 600;
-    private static int generations = 600;
-    private static int cell_spatial_entropy = 300;
+    private static int cells_number = 1000;
+    private static int generations = 1000;
+    private static int cell_spatial_entropy = 499;
 
 
     public void actionPerformed( ActionEvent e) {
@@ -398,54 +361,24 @@ public class GuiCA1D extends Frame implements ActionListener, FocusListener {
             canvas_template.updateCanvas();
         }
 
-        if(e.getSource() == nav_bar.getMenu(1).getItem(0)){
-            worker = new SwingWorker<Void, GuiCA1D>()
-            {
-                @Override
-                protected Void doInBackground() {
-                    try{
-                        population_chart = new AnalyticsMultiChart("Population Chart",
-                                "Generations", "Cells Number");
-                        population_chart.setRef(MainCanvas.task);
-                        population_chart.show();
 
-
-                    }
-                    catch(Exception ex){System.out.println("Worker exception");}
-                    return null;
-                }
-            };
-            worker.execute();
-        }
-
-        if(e.getSource()==nav_bar.getMenu(3).getItem(0)) {
+        if(e.getSource()==nav_bar.getMenu(2).getItem(0)) {
             String uri = "https://docs.oracle.com/javase/7/docs/api/javax/swing/package-summary.html";
             showURI(uri);
         }
 
-        if(e.getSource()==nav_bar.getMenu(4).getItem(0)) {
+        if(e.getSource()==nav_bar.getMenu(3).getItem(0)) {
             String uri = "https://github.com/Jeffresh";
             showURI(uri);
         }
 
         if(e.getSource() == gui_buttons.get(buttons_names[0])) {
 
-            if(cilindric_frontier_buttons.get("Yes").isSelected())
-                cfrontier = 1;
-            else cfrontier = 0;
-            System.out.println("Cfrontier "+cfrontier);
-
             MainCanvas.task = new CellularAutomata1D();
             MainCanvas.task.plug(canvas_template);
             MainCanvas.task.initializer(cells_number, generations, states_number,
                     neighborhood_range, transition_function, seed, cfrontier , initializer_mode, cell_spatial_entropy);
             MainCanvas.setDimensions(cells_number, generations);
-//            population_chart = new PopulationChart("Population Chart",
-//                    "Generations", "Cells Number");
-
-            population_chart.setRef(MainCanvas.task);
-            MainCanvas.task.plugPopulationChart(population_chart);
-            population_chart.create_series();
 
             System.out.println("Cells number: "+cells_number);
             System.out.println("Generations: "+generations);
@@ -467,12 +400,6 @@ public class GuiCA1D extends Frame implements ActionListener, FocusListener {
                 protected Void doInBackground() {
                     try{
                         MainCanvas.task.caComputation(generations);
-//                        population_chart = new PopulationChart("Population Chart",
-//                                "Generations", "Cells Number");;
-                        MainCanvas.task.plugPopulationChart(population_chart);
-                        population_chart.setRef(MainCanvas.task);
-//                        population_chart.show();
-//                        population_chart.go(generations,states_number);
                         String message = "\"Temporal entropy\"\n"
                                 + "cell: "+cell_spatial_entropy+"\n"
                                 + "Spatial entropy: "+MainCanvas.task.getTemporalEntropy();
@@ -506,39 +433,16 @@ public class GuiCA1D extends Frame implements ActionListener, FocusListener {
 	public void focusLost(FocusEvent e) {
         String nump;
 
-//        // cell number
-//        if(e.getSource() == input_variables_textfields[0]) {
-//            nump = input_variables_textfields[0].getText();
-//            string_var = nump;
-//            cells_number = Integer.parseInt(nump);
-//        }
-//
-//        //generations
-//
-//        if(e.getSource() == input_variables_textfields[0]) {
-//            nump = input_variables_textfields[1].getText();
-//            string_var = nump;
-//            generations = Integer.parseInt(nump);
-//        }
-
-        //states number
-        if(e.getSource() == input_variables_textfields[0]) {
-            nump = input_variables_textfields[0].getText();
-            string_var = nump;
-            states_number = Integer.parseInt(nump);
-        }
-
-        //Neighborhood Range
         try {
                 double nump_value;
-                if (e.getSource() == input_variables_textfields[1]) {
-                    nump = input_variables_textfields[1].getText();
+                if (e.getSource() == input_variables_textfields[0]) {
+                    nump = input_variables_textfields[0].getText();
                     nump_value = Double.parseDouble(nump);
                     if (nump.equals("") || (nump_value < 0 || nump_value >=1000)) {
                         numeric_var = 0;
                         throw new Exception("Invalid Number");
                     }
-                    neighborhood_range = Integer.parseInt(nump);
+                    transition_function = Integer.parseInt(nump);
                 }
             }
             catch (Exception ex){
@@ -548,51 +452,7 @@ public class GuiCA1D extends Frame implements ActionListener, FocusListener {
                 JOptionPane.showMessageDialog(new JFrame(), message, "Dialog",
                         JOptionPane.ERROR_MESSAGE);
             }
-        //transition function
-        if(e.getSource() == input_variables_textfields[2]) {
-            nump = input_variables_textfields[2].getText();
-            string_var = nump;
-            transition_function = Integer.parseInt(nump);
-        }
 
-        //seed
-        if(e.getSource() == input_variables_textfields[3]) {
-            nump = input_variables_textfields[5].getText();
-            seed = Integer.parseInt(nump);
-        }
-
-        if(e.getSource() == generator_list_combo_box) {
-            JComboBox<String> cb = (JComboBox<String>)e.getSource();
-            String op = (String)cb.getSelectedItem();
-            assert op != null;
-            initializer_mode = op;
-        }
-
-        if(e.getSource() == input_variables_textfields[0]) {
-            nump = input_variables_textfields[0].getText();
-            string_var = nump;
-            states_number = Integer.parseInt(nump);
-        }
-
-        //cell temporal entropy
-        try {
-            double nump_value;
-            if (e.getSource() == input_variables_textfields[4]) {
-                nump = input_variables_textfields[4].getText();
-                nump_value = Double.parseDouble(nump);
-                if (nump.equals("") || (nump_value < 0 || nump_value >=600)) {
-                    numeric_var = 0;
-                    throw new Exception("Invalid Number");
-                }
-                cell_spatial_entropy = Integer.parseInt(nump);
-            }
-        }
-        catch (Exception ex){
-            String message = "\"Invalid Cell Number\"\n"
-                    + "Enter a number between 0 and 599\n" ;
-            JOptionPane.showMessageDialog(new JFrame(), message, "Dialog",
-                    JOptionPane.ERROR_MESSAGE);
-        }
     }
     
     public static void main(String[] args)
