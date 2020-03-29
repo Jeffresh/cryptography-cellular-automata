@@ -219,6 +219,7 @@ public class CellularAutomata1D implements Runnable
     private void initializeState(ArrayList<BigInteger> random_generated){
         for(BigInteger num: random_generated){
             matrix[num.intValue()%width][0] = num.intValue()%states_number;
+            actual_gen[num.intValue()%width] = num.intValue()%states_number;
         }
     }
 
@@ -287,7 +288,6 @@ public class CellularAutomata1D implements Runnable
     }
 
     public static void change_refs(){
-
         int[] aux = actual_gen;
         actual_gen = next_gen;
         next_gen = aux;
