@@ -23,6 +23,7 @@ public class CellularAutomata1D implements Runnable
 {
 
     private static int[][] matrix;
+    private static int[] actual_gen, next_gen;
     public static AtomicIntegerArray population_counter;
     private static AtomicInteger hamming_distance_counter;
     private int [] local_population_counter;
@@ -228,6 +229,7 @@ public class CellularAutomata1D implements Runnable
         width = cells_number;
         height = generations;
         matrix = new int[height][width];
+        actual_gen = new int[width]; next_gen = new int[width];
         CellularAutomata1D.entropy_cell = entropy_cell;
 
         population_counter = new AtomicIntegerArray(states_number);
@@ -282,6 +284,13 @@ public class CellularAutomata1D implements Runnable
         next_gen_concurrent(4,nGen);
 
         return population;
+    }
+
+    public static void change_refs(){
+
+        int[] aux = actual_gen;
+        actual_gen = next_gen;
+        next_gen = aux;
     }
 
     public  LinkedList<Double>[] nextGen(int actual_gen){
