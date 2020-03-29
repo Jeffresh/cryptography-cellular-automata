@@ -23,7 +23,7 @@ public class CellularAutomata1D implements Runnable
 {
 
     private static int[][] matrix;
-    private static int[] actual_gen, next_gen;
+    private static int[] actual_state, next_state;
     public static AtomicIntegerArray population_counter;
     private static AtomicInteger hamming_distance_counter;
     private int [] local_population_counter;
@@ -102,6 +102,7 @@ public class CellularAutomata1D implements Runnable
                     hamming.add((double)hamming_distance_counter.intValue());
                     hamming_distance_counter = new AtomicInteger(0);
                     spatial_entropy.add(computeEntropy(spatial_entropy_counter));
+                    change_refs();
                 }
 
                 if(barrier.getParties() == 0)
@@ -219,7 +220,7 @@ public class CellularAutomata1D implements Runnable
     private void initializeState(ArrayList<BigInteger> random_generated){
         for(BigInteger num: random_generated){
             matrix[num.intValue()%width][0] = num.intValue()%states_number;
-            actual_gen[num.intValue()%width] = num.intValue()%states_number;
+            actual_state[num.intValue()%width] = num.intValue()%states_number;
         }
     }
 
@@ -230,7 +231,7 @@ public class CellularAutomata1D implements Runnable
         width = cells_number;
         height = generations;
         matrix = new int[height][width];
-        actual_gen = new int[width]; next_gen = new int[width];
+        actual_state = new int[width]; next_state = new int[width];
         CellularAutomata1D.entropy_cell = entropy_cell;
 
         population_counter = new AtomicIntegerArray(states_number);
@@ -288,9 +289,9 @@ public class CellularAutomata1D implements Runnable
     }
 
     public static void change_refs(){
-        int[] aux = actual_gen;
-        actual_gen = next_gen;
-        next_gen = aux;
+        int[] aux = actual_state;
+        actual_state = next_state;
+        next_state = aux;
     }
 
     public  LinkedList<Double>[] nextGen(int actual_gen){
@@ -311,22 +312,35 @@ public class CellularAutomata1D implements Runnable
 
                 while(exp < neighborhood_range *2 +1){
                     if(j<cells_number && j>0)
-                        irule = irule + matrix[j][actual_gen]  * (int)Math.pow(states_number,exp);
+//                        irule = irule + matrix[j][actual_gen]  * (int)Math.pow(states_number,exp);
+                        irule = irule + actual_state[j]  * (int)Math.pow(states_number,exp);
                     exp ++;
                     j = ( j== 0) ? 0 : j - 1;
                 }
 
-                if (irule >= binary_rule.length)
-                    matrix[i][actual_gen + 1] = 0;
-                else
-                    matrix[i][actual_gen + 1] = binary_rule[irule];
+                if (irule >= binary_rule.length) {
+//                    matrix[i][actual_gen + 1] = 0;
+                    next_state[i] = 0;
+                }
+                else {
+//                    matrix[i][actual_gen + 1] = binary_rule[irule];
+                    next_state[i] = binary_rule[irule];
+                }
 
-                local_population_counter[matrix[i][actual_gen + 1]]++;
-                if( matrix[i][actual_gen] != matrix[i][actual_gen+1])
+//                local_population_counter[matrix[i][actual_gen + 1]]++;
+                local_population_counter[next_state[i]]++;
+
+//                if( matrix[i][actual_gen] != matrix[i][actual_gen+1])
+//                    local_hamming_distance_counter++;
+
+                if( actual_state[i] != next_state[i])
                     local_hamming_distance_counter++;
 
+
+
                 if(i == entropy_cell){
-                    temporal_entropy_counter[matrix[i][actual_gen + 1]]++;
+//                    temporal_entropy_counter[matrix[i][actual_gen + 1]]++;
+                    temporal_entropy_counter[next_state[i]]++;
                 }
 
             }
