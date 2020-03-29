@@ -169,7 +169,6 @@ public class GuiCA1D extends Frame implements ActionListener, FocusListener {
             labels[index].setLabelFor(textFields[index]);
             index++;
         }
-
         return new Object[]{labels, textFields};
     }
 
@@ -179,16 +178,7 @@ public class GuiCA1D extends Frame implements ActionListener, FocusListener {
     private static JLabel [] radio_button_labels = { new JLabel("Cilindric Frontier")};
 
     private static void initializeInputTextFieldsAndLabels(){
-//        textfields_and_labels.put("Cells number (width): ", "300");//2
-//        textfields_and_labels.put("Generations: ", "600");//3
-        textfields_and_labels.put("CA-Rule: ", "90");//1
-//        textfields_and_labels.put("Neighborhood Range: ", "1");//4
-//        textfields_and_labels.put("Transition function: ", "90");//5
-//        textfields_and_labels.put("Seed: ", "1"); //0
-//        textfields_and_labels.put("Cell (temporal entropy): ","300");
-
-
-        combobox_labels[0].setLabelFor(generator_list_combo_box);
+        textfields_and_labels.put("CA-Rule: ", "90");
     }
     private static void initializeButtonNames(){
         buttons_names = new String[]{"Initialize", "Start", "Stop"};
@@ -480,8 +470,6 @@ public class GuiCA1D extends Frame implements ActionListener, FocusListener {
                 }
             };
             worker.execute();
-
-
         }
 
         if(e.getSource()== gui_buttons.get(buttons_names[2])) {
@@ -510,7 +498,7 @@ public class GuiCA1D extends Frame implements ActionListener, FocusListener {
                     }
                     transition_function = Integer.parseInt(nump);
                 }
-            }
+        }
             catch (Exception ex){
                 String message = "\"Invalid Number\"\n"
                         + "Enter a number between 0 and 1000\n"
@@ -518,7 +506,6 @@ public class GuiCA1D extends Frame implements ActionListener, FocusListener {
                 JOptionPane.showMessageDialog(new JFrame(), message, "Dialog",
                         JOptionPane.ERROR_MESSAGE);
             }
-
     }
     
     public static void main(String[] args)
@@ -528,8 +515,6 @@ public class GuiCA1D extends Frame implements ActionListener, FocusListener {
         javax.swing.
                 SwingUtilities.
                 invokeLater(GuiCA1D::createAndShowGUI);
-
-
     }
 }
 
