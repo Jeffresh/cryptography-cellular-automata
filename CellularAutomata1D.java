@@ -63,6 +63,60 @@ public class CellularAutomata1D implements Runnable
     private static int size_pool;
     private static ThreadPoolExecutor myPool;
 
+    public void run() {
+
+        for (int i = 0; i < generations-1 ; i++) {
+            if(abort)
+                break;
+            nextGen(i);
+
+            try
+            {
+                int l = barrier.await();
+                for (int j = 0; j < states_number; j++) {
+                    population_counter.getAndAdd(j,this.local_population_counter[j]);
+                }
+
+                hamming_distance_counter.addAndGet(this.local_hamming_distance_counter);
+
+                if(barrier.getParties() == 0)
+                    barrier.reset();
+
+                l = barrier.await();
+
+
+                if(this.task_number==1) {
+
+                    int[] spatial_entropy_counter = new int [states_number];
+
+                    for (int j = 0; j < states_number; j++) {
+                        spatial_entropy_counter[j] = population_counter.get(j);
+                        population[j].add((double)population_counter.get(j));
+                    }
+                    population_counter = new AtomicIntegerArray(states_number);
+                    hamming.add((double)hamming_distance_counter.intValue());
+                    hamming_distance_counter = new AtomicInteger(0);
+                    spatial_entropy.add(computeEntropy(spatial_entropy_counter));
+                    changeRefs();
+                }
+
+                if(barrier.getParties() == 0)
+                    barrier.reset();
+
+                l = barrier.await();
+
+
+                if(barrier.getParties() == 0)
+                    barrier.reset();
+            }catch(Exception e){}
+        }
+
+        if(this.task_number==1)
+            temporal_entropy = computeEntropy(temporal_entropy_counter);
+
+
+    }
+
     public CellularAutomata1D(){}
 
     public CellularAutomata1D(int i) {
@@ -77,7 +131,7 @@ public class CellularAutomata1D implements Runnable
         if( total_tasks == task_number)
             fn =cells_number;
 
-        System.out.println(in+" "+fn);
+//        System.out.println(in+" "+fn);
 
     }
 
@@ -120,14 +174,14 @@ public class CellularAutomata1D implements Runnable
 
 
 
-        StringBuilder cout= new StringBuilder(new String());
-        cout.append("| ");
-        for (int value : binary_rule) {
-            cout.append(value);
-            cout.append(" | ");
-        }
-        System.out.println(cout);
-        System.out.println(Arrays.toString(binary_rule));
+//        StringBuilder cout= new StringBuilder(new String());
+//        cout.append("| ");
+//        for (int value : binary_rule) {
+//            cout.append(value);
+//            cout.append(" | ");
+//        }
+//        System.out.println(cout);
+//        System.out.println(Arrays.toString(binary_rule));
         return binary_rule;
     }
     public static void stop() {
@@ -234,62 +288,7 @@ public class CellularAutomata1D implements Runnable
 
     }
 
-    public void run() {
 
-        for (int i = 0; i < generations-1 ; i++) {
-            if(abort)
-                break;
-            nextGen(i);
-
-            try
-            {
-                int l = barrier.await();
-                for (int j = 0; j < states_number; j++) {
-                    population_counter.getAndAdd(j,this.local_population_counter[j]);
-                }
-
-                hamming_distance_counter.addAndGet(this.local_hamming_distance_counter);
-
-                if(barrier.getParties() == 0)
-                    barrier.reset();
-
-                l = barrier.await();
-
-
-                if(this.task_number==1) {
-                    this.canvasTemplateRef.revalidate();
-                    this.canvasTemplateRef.repaint();
-                    Thread.sleep(0,10);
-
-                    int[] spatial_entropy_counter = new int [states_number];
-
-                    for (int j = 0; j < states_number; j++) {
-                        spatial_entropy_counter[j] = population_counter.get(j);
-                        population[j].add((double)population_counter.get(j));
-                    }
-                    population_counter = new AtomicIntegerArray(states_number);
-                    hamming.add((double)hamming_distance_counter.intValue());
-                    hamming_distance_counter = new AtomicInteger(0);
-                    spatial_entropy.add(computeEntropy(spatial_entropy_counter));
-                    changeRefs();
-                }
-
-                if(barrier.getParties() == 0)
-                    barrier.reset();
-
-                l = barrier.await();
-
-
-                if(barrier.getParties() == 0)
-                    barrier.reset();
-            }catch(Exception e){}
-        }
-
-        if(this.task_number==1)
-            temporal_entropy = computeEntropy(temporal_entropy_counter);
-
-
-    }
 
     public  LinkedList<Double>[] nextGen(int actual_gen){
 
