@@ -196,7 +196,7 @@ public class CellularAutomata1D implements Runnable
         transition_function = rule;
     }
 
-    private int[] compute_rule(){
+    private int[] computeRule(){
 
         int decimal_rule = transition_function;
         int size_binary_rule = (2*neighborhood_range+1)*states_number;
@@ -257,7 +257,7 @@ public class CellularAutomata1D implements Runnable
         for (int i = 0; i < states_number; i++) {
             population[i] = new LinkedList<Double>();
         }
-        compute_rule();
+        computeRule();
         handler.createEngines();
         randomInitializer = new RandomGenerator(seed);
 
@@ -319,34 +319,20 @@ public class CellularAutomata1D implements Runnable
                     exp ++;
                     j = ( j== 0) ? 0 : j - 1;
                 }
-
-                if (irule >= binary_rule.length) {
-//                    matrix[i][actual_gen + 1] = 0;
+                if (irule >= binary_rule.length)
                     next_state[i] = 0;
-                }
-                else {
-//                    matrix[i][actual_gen + 1] = binary_rule[irule];
+                else
                     next_state[i] = binary_rule[irule];
-                }
 
-//                local_population_counter[matrix[i][actual_gen + 1]]++;
                 local_population_counter[next_state[i]]++;
-
-//                if( matrix[i][actual_gen] != matrix[i][actual_gen+1])
-//                    local_hamming_distance_counter++;
 
                 if( actual_state[i] != next_state[i])
                     local_hamming_distance_counter++;
 
-
-
                 if(i == entropy_cell){
-//                    temporal_entropy_counter[matrix[i][actual_gen + 1]]++;
                     temporal_entropy_counter[next_state[i]]++;
                 }
-
             }
-
         }
         else{
             for (int i = in; i < fn; i++) {
