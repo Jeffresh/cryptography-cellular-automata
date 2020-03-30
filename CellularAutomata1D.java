@@ -192,6 +192,10 @@ public class CellularAutomata1D implements Runnable
         return  entropy*-1;
     }
 
+    public void setTransitionFunction(int rule){
+        transition_function = rule;
+    }
+
     private int[] compute_rule(){
 
         int decimal_rule = transition_function;
@@ -309,10 +313,8 @@ public class CellularAutomata1D implements Runnable
                 int j =(i + neighborhood_range) % width;
                 int irule = 0;
                 int exp = 0;
-
                 while(exp < neighborhood_range *2 +1){
                     if(j<cells_number && j>0)
-//                        irule = irule + matrix[j][actual_gen]  * (int)Math.pow(states_number,exp);
                         irule = irule + actual_state[j]  * (int)Math.pow(states_number,exp);
                     exp ++;
                     j = ( j== 0) ? 0 : j - 1;
