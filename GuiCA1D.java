@@ -375,7 +375,7 @@ public class GuiCA1D extends Frame implements ActionListener, FocusListener {
     private static int cell_spatial_entropy = 499;
     private static String password = "pass";
 
-    private void codePassword(String password_plain){
+    private int[] codePassword(String password_plain){
 
         password_plain=password_plain.replaceAll("\\s+","");
 
@@ -393,9 +393,11 @@ public class GuiCA1D extends Frame implements ActionListener, FocusListener {
             binary_values[j] = Integer.parseInt(String.valueOf(messChar[j]));
         }
 
-        for(int i: binary_values)
-            System.out.println(i);
-        System.out.println(messChar);
+//        for(int i: binary_values)
+//            System.out.println(i);
+//        System.out.println(messChar);
+
+        return binary_values;
     }
 
 

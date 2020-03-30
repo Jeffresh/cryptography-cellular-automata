@@ -196,6 +196,12 @@ public class CellularAutomata1D implements Runnable
             actual_state[num.intValue()%width] = num.intValue()%states_number;
         }
     }
+    public void initializeStatePassword(int [] password){
+        actual_state = new int[password.length]; next_state = new int[password.length];
+        for(int i = 0 ; i < password.length; i++)
+            actual_state[i] = password[i];
+
+    }
 
     public void initializer (int cells_number, int generations, int states_number,
                              int neighborhood_range, int transition_function, int seed,
