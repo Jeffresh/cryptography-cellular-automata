@@ -196,7 +196,7 @@ public class CellularAutomata1D implements Runnable
         transition_function = rule;
     }
 
-    private int[] computeRule(){
+    public int[] computeRule(){
 
         int decimal_rule = transition_function;
         int size_binary_rule = (2*neighborhood_range+1)*states_number;
