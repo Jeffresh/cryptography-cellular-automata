@@ -53,7 +53,7 @@ class MainCanvas extends JPanel {
     private  BufferedImage GenerateImage() {
         Color color;
 
-        int[][] matrix = task.getData();
+        int[][] matrix = null;
 
         for(int x = 0; x < yMax; x++)
         {
@@ -85,7 +85,7 @@ class MainCanvas extends JPanel {
     @Override
     protected void paintComponent(Graphics g) {
         super.paintComponent(g);
-        if (task.getData() != null)
+        if (task  != null)
             g.drawImage(GenerateImage(), 500 - 600 / 2, 500 - 600 / 2, 600, 600, null);
     }
 }

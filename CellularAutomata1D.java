@@ -22,7 +22,6 @@ import java.util.concurrent.atomic.AtomicIntegerArray;
 public class CellularAutomata1D implements Runnable
 {
 
-    private static int[][] matrix;
     private static int[] actual_state, next_state;
     public static AtomicIntegerArray population_counter;
     private static AtomicInteger hamming_distance_counter;
@@ -34,7 +33,6 @@ public class CellularAutomata1D implements Runnable
     private static double temporal_entropy;
     private static int[] temporal_entropy_counter;
     public static MainCanvas canvasTemplateRef;
-    public int[][] getData() { return matrix; }
     public void plug(MainCanvas ref) { canvasTemplateRef = ref; }
     public static int entropy_cell;
 
@@ -195,7 +193,6 @@ public class CellularAutomata1D implements Runnable
 
     private void initializeState(ArrayList<BigInteger> random_generated){
         for(BigInteger num: random_generated){
-            matrix[num.intValue()%width][0] = num.intValue()%states_number;
             actual_state[num.intValue()%width] = num.intValue()%states_number;
         }
     }
@@ -205,7 +202,6 @@ public class CellularAutomata1D implements Runnable
                              int cfrontier , String random_engine, int entropy_cell){
         width = cells_number;
         height = generations;
-        matrix = new int[height][width];
         actual_state = new int[width]; next_state = new int[width];
         CellularAutomata1D.entropy_cell = entropy_cell;
 
@@ -247,7 +243,7 @@ public class CellularAutomata1D implements Runnable
                             seed, seed, seed, width);
             initializeState(random_generated);
         }
-        temporal_entropy_counter[matrix[0][entropy_cell]]++;
+        temporal_entropy_counter[actual_state[entropy_cell]]++;
     }
 
 
@@ -335,7 +331,7 @@ public class CellularAutomata1D implements Runnable
                 int exp = 0;
 
                 while(exp < neighborhood_range *2 +1){
-                    irule = irule + matrix[j][actual_gen] * (int)Math.pow(states_number,exp);
+                    irule = irule + actual_state[j] * (int)Math.pow(states_number,exp);
                     exp ++;
                     j = ( j== 0) ? ( j - 1 + cells_number) : j - 1;
                 }
