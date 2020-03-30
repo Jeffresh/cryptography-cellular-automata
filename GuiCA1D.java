@@ -179,6 +179,7 @@ public class GuiCA1D extends Frame implements ActionListener, FocusListener {
 
     private static void initializeInputTextFieldsAndLabels(){
         textfields_and_labels.put("CA-Rule: ", "90");
+        textfields_and_labels.put("Key: ", "pass");
     }
     private static void initializeButtonNames(){
         buttons_names = new String[]{"Initialize", "Start", "Stop"};
@@ -372,6 +373,7 @@ public class GuiCA1D extends Frame implements ActionListener, FocusListener {
     private static int cells_number = 1000;
     private static int generations = 1000;
     private static int cell_spatial_entropy = 499;
+    private static String password = "pass";
 
 
     public void actionPerformed( ActionEvent e) {
@@ -444,6 +446,7 @@ public class GuiCA1D extends Frame implements ActionListener, FocusListener {
             System.out.println("Seed: "+seed);
             System.out.println("Initializer mode: "+initializer_mode);
             System.out.println("Cell Spatial Entropy: "+cell_spatial_entropy);
+            System.out.println("Password: "+password);
 
 
             canvas_template.updateCanvas();
@@ -492,7 +495,7 @@ public class GuiCA1D extends Frame implements ActionListener, FocusListener {
                 if (e.getSource() == input_variables_textfields[0]) {
                     nump = input_variables_textfields[0].getText();
                     nump_value = Double.parseDouble(nump);
-                    if (nump.equals("") || (nump_value < 0 || nump_value >=1000)) {
+                    if (nump.equals("") || (nump_value < 0 || nump_value >=255)) {
                         numeric_var = 0;
                         throw new Exception("Invalid Number");
                     }
@@ -501,11 +504,16 @@ public class GuiCA1D extends Frame implements ActionListener, FocusListener {
         }
             catch (Exception ex){
                 String message = "\"Invalid Number\"\n"
-                        + "Enter a number between 0 and 1000\n"
+                        + "Enter a number between 0 and 255\n"
                         + " setted 0 by default";
                 JOptionPane.showMessageDialog(new JFrame(), message, "Dialog",
                         JOptionPane.ERROR_MESSAGE);
             }
+
+        double string;
+        if (e.getSource() == input_variables_textfields[1]) {
+             password = input_variables_textfields[1].getText();
+        }
     }
     
     public static void main(String[] args)
