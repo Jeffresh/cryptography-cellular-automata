@@ -233,7 +233,7 @@ public class CellularAutomata1D implements Runnable
         randomInitializer = new RandomGenerator(seed);
 
         if (random_engine.equals("Basic"))
-            matrix[width / 2][0] = 1;
+            actual_state[width/2] =1;
         else if(!random_engine.equals("generatorCombinedWXY")) {
             ArrayList<BigInteger> random_generated = randomInitializer.
                     getRandomSequence(handler.engines.get(random_engine), seed, width);
@@ -341,22 +341,19 @@ public class CellularAutomata1D implements Runnable
                 }
 
                 if (irule >= binary_rule.length)
-                    matrix[i][actual_gen + 1] = 0;
+                    next_state[i] = 0;
                 else
-                    matrix[i][actual_gen + 1] = binary_rule[irule];
+                    next_state[i] = binary_rule[irule];
 
-                local_population_counter[matrix[i][actual_gen + 1]]++;
+                local_population_counter[next_state[i]]++;
 
-                if( matrix[i][actual_gen] != matrix[i][actual_gen+1])
+                if( actual_state[i] != next_state[i])
                     local_hamming_distance_counter++;
 
-                if(i == entropy_cell){
-                    temporal_entropy_counter[matrix[i][actual_gen + 1]]++;
-                }
-
+                if(i == entropy_cell)
+                    temporal_entropy_counter[next_state[i]]++;
 
             }
-
 
         }
         return population;
