@@ -375,6 +375,29 @@ public class GuiCA1D extends Frame implements ActionListener, FocusListener {
     private static int cell_spatial_entropy = 499;
     private static String password = "pass";
 
+    private void codePassword(String password_plain){
+
+        password_plain=password_plain.replaceAll("\\s+","");
+
+        char[] messChar = password_plain.toCharArray();
+        String result = "";
+
+        for (int i = 0; i < messChar.length; i++) {
+            result += Integer.toBinaryString(messChar[i]) ;
+        }
+
+        messChar = result.toCharArray();
+        int[] binary_values = new int[messChar.length];
+
+        for(int j = 0 ; j < messChar.length; j++){
+            binary_values[j] = Integer.parseInt(String.valueOf(messChar[j]));
+        }
+
+        for(int i: binary_values)
+            System.out.println(i);
+        System.out.println(messChar);
+    }
+
 
     public void actionPerformed( ActionEvent e) {
 
@@ -447,6 +470,8 @@ public class GuiCA1D extends Frame implements ActionListener, FocusListener {
             System.out.println("Initializer mode: "+initializer_mode);
             System.out.println("Cell Spatial Entropy: "+cell_spatial_entropy);
             System.out.println("Password: "+password);
+
+            codePassword(password);
 
 
             canvas_template.updateCanvas();
