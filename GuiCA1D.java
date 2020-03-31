@@ -7,8 +7,6 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.*;
 
-import static java.nio.charset.StandardCharsets.UTF_8;
-
 /**
      * GuiTemplate.java
      * Purpose: this program
@@ -266,14 +264,14 @@ public class GuiCA1D extends Frame implements ActionListener, FocusListener {
     private static JTextArea log;
     private static JPanel canvas;
     private static JTextArea input_area;
-    private static JTextPane output_area;
+    private static JTextArea output_area;
     private static  JSplitPane encryption_area;
 
 
     private static JPanel createEncryptionArea(String input_area_text){
         JPanel canvas = new JPanel();
         input_area = new JTextArea(input_area_text);
-        output_area = new JTextPane();
+        output_area = new JTextArea();
 
         input_area.setPreferredSize(new Dimension(700, 920));
         input_area.setMaximumSize(new Dimension(700, 920));
@@ -307,10 +305,10 @@ public class GuiCA1D extends Frame implements ActionListener, FocusListener {
 
         int xMax = cells_number;
         int yMax = generations;
-        canvas_template = new MainCanvas(xMax, yMax);
-        canvas_template.setOpaque(true);
-        canvas_template.setDoubleBuffered(false);
-        canvas_template.setPreferredSize(new Dimension(1000, 1000));
+//        canvas_template = new MainCanvas(xMax, yMax);
+//        canvas_template.setOpaque(true);
+//        canvas_template.setDoubleBuffered(false);
+//        canvas_template.setPreferredSize(new Dimension(1000, 1000));
 
 
         canvas =createEncryptionArea("Write here a message to be encrypted");
@@ -385,6 +383,8 @@ public class GuiCA1D extends Frame implements ActionListener, FocusListener {
                 binary.append((val & 128) == 0 ? 0 : 1);
                 val <<= 1;
             }
+            binary.append(' ');
+
         }
 
         return binary.toString();
@@ -404,11 +404,71 @@ public class GuiCA1D extends Frame implements ActionListener, FocusListener {
         return str;
     }
 
-//    private String encryptMessage(String message){
-//
-//
-//
-//    }
+    private String encryptMessage(String message){
+
+
+        byte[]bytes = new byte[message.length()];
+        try{
+            bytes = message.getBytes("ISO-8859-1");}catch(Exception e){}
+        StringBuilder binary_message = new StringBuilder();
+
+        for(byte b : bytes)
+        {
+            int val =b;
+            for(int i =0 ; i<8 ; i++)
+            {
+                binary_message.append((val&128)==0?'0':'1');
+                val<<=1;
+            }
+
+            binary_message.append(" ");
+        }
+
+        int n_bits = binary_message.length();
+
+        CellularAutomata1D ca1d = new CellularAutomata1D();
+        ca1d.initializer(n_bits, generations, states_number,
+                neighborhood_range, transition_function, seed, cfrontier , initializer_mode, n_bits/2);
+
+        String binary_pass = stringToBinary(password);
+        ca1d.initializeStatePassword(binary_pass);
+
+        char[] cad = new char[binary_message.length()];
+
+        for(int i = 0; i<cad.length; i ++)
+        {
+
+            if(binary_message.charAt(i)!=' ')
+            {
+                if(ca1d.getActualState()[getWidth()/2] == 0 && binary_message.charAt(i) == '0' ||
+                        ca1d.getActualState()[getWidth()/2] == 1 && binary_message.charAt(i) == '1')
+                    cad[i] = '0';
+                else
+                    cad[i]='1';
+            }
+            else
+                cad[i]= ' ';
+
+
+            try{ca1d.nextGen(i);}catch(Exception e){};
+            CellularAutomata1D.changeRefs();
+
+        }
+
+        String aux = new String(cad);
+
+        String[] palabras = aux.split(" ");
+        StringBuilder cadf = new StringBuilder();
+
+
+
+        for(int i = 0; i<palabras.length; i++)
+            cadf.append((char)Integer.parseInt(palabras[i],2));
+
+
+        return cadf.toString();
+
+    }
 
 
     public void actionPerformed( ActionEvent e) {
@@ -429,7 +489,8 @@ public class GuiCA1D extends Frame implements ActionListener, FocusListener {
                     cout = new Scanner(file);
                     while (cout.hasNextLine()){
                         input_loaded_text += cout.nextLine();     // Guardamos la linea en un String
-                        System.out.println(input_loaded_text);}
+//                        System.out.println(input_loaded_text);
+                    }
                 }catch(Exception ex){}
             }
 
@@ -447,11 +508,11 @@ public class GuiCA1D extends Frame implements ActionListener, FocusListener {
         }
 
         if(e.getSource() == nav_bar.getMenu(0).getItem(1)) {
-            value = 3;
-            deleteCanvasLabels(input_variables_labels);
-            MainCanvas.task.initializer(cells_number, generations, states_number,
-                    neighborhood_range, transition_function, seed, cfrontier , initializer_mode, cell_spatial_entropy);
-            canvas_template.updateCanvas();
+//            value = 3;
+//            deleteCanvasLabels(input_variables_labels);
+//            MainCanvas.task.initializer(cells_number, generations, states_number,
+//                    neighborhood_range, transition_function, seed, cfrontier , initializer_mode, cell_spatial_entropy);
+//            canvas_template.updateCanvas();
         }
 
 
@@ -466,12 +527,18 @@ public class GuiCA1D extends Frame implements ActionListener, FocusListener {
         }
 
         if(e.getSource() == gui_buttons.get(buttons_names[0])) {
+            String message =new String();
 
-            MainCanvas.task = new CellularAutomata1D();
-            MainCanvas.task.plug(canvas_template);
-            MainCanvas.task.initializer(cells_number, generations, states_number,
-                    neighborhood_range, transition_function, seed, cfrontier , initializer_mode, cell_spatial_entropy);
-            MainCanvas.setDimensions(cells_number, generations);
+            message = input_area.getText();
+
+            System.out.println(message);
+
+            String encrypted_message = encryptMessage(message);
+
+            System.out.print(encrypted_message);
+
+            output_area.setText(encrypted_message);
+
 
             System.out.println("Cells number: "+cells_number);
             System.out.println("Generations: "+generations);
@@ -483,10 +550,6 @@ public class GuiCA1D extends Frame implements ActionListener, FocusListener {
             System.out.println("Cell Spatial Entropy: "+cell_spatial_entropy);
             System.out.println("Password: "+password);
 
-            stringToBinary(password);
-
-
-            canvas_template.updateCanvas();
         }
 
         if(e.getSource()== gui_buttons.get(buttons_names[1])) {
