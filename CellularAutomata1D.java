@@ -139,6 +139,25 @@ public class CellularAutomata1D implements Runnable
     public LinkedList<Double> getHammingDistance(){
         return hamming;
     }
+
+    public double getHammingDistanceValue(){
+        double hamming_value = 0;
+
+        for (double i:hamming) {
+            hamming_value+=i;
+        }
+
+        return hamming_value;
+    }
+    public double getSpatialEntropyValue(){
+        double spatial_entropy_value = 0;
+
+        for (double i:spatial_entropy) {
+            spatial_entropy_value+=i;
+        }
+
+        return spatial_entropy_value;
+    }
     public LinkedList<Double> getEntropy(){
         return spatial_entropy;
     }
@@ -148,7 +167,7 @@ public class CellularAutomata1D implements Runnable
 
     public int[] getActualState(){return actual_state;}
 
-    public Double getTemporalEntropy(){
+    public double getTemporalEntropy(){
         return temporal_entropy;
     }
     public double computeEntropy(int[] population){
