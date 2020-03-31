@@ -204,7 +204,7 @@ public class CellularAutomata1D implements Runnable
             actual_state[i] = password.charAt(i)=='1'?1:0;
 
 
-        System.out.println(Arrays.toString(actual_state));
+//        System.out.println(Arrays.toString(actual_state));
 
     }
 
@@ -213,7 +213,7 @@ public class CellularAutomata1D implements Runnable
                              int cfrontier , String random_engine, int entropy_cell){
         width = cells_number;
         height = generations;
-        actual_state = new int[width]; next_state = new int[width];
+        actual_state = new int[cells_number]; next_state = new int[cells_number];
         CellularAutomata1D.entropy_cell = entropy_cell;
 
         population_counter = new AtomicIntegerArray(states_number);
@@ -240,7 +240,7 @@ public class CellularAutomata1D implements Runnable
         randomInitializer = new RandomGenerator(seed);
 
         if (random_engine.equals("Basic"))
-            actual_state[width/2] =1;
+            actual_state[cells_number/2] =1;
         else if(!random_engine.equals("generatorCombinedWXY")) {
             ArrayList<BigInteger> random_generated = randomInitializer.
                     getRandomSequence(handler.engines.get(random_engine), seed, width);
@@ -303,10 +303,9 @@ public class CellularAutomata1D implements Runnable
         local_hamming_distance_counter = 0;
         for (int i = 0; i < states_number; i++) {
             this.local_population_counter[i]=0;
-
         }
         if (cfrontier==0){
-            for (int i = in; i < fn; i++) {
+            for (int i = 0; i <cells_number; i++) {
                 if(abort)
                     break;
                 int j =(i + neighborhood_range) % width;
