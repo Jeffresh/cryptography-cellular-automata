@@ -201,6 +201,9 @@ public class CellularAutomata1D implements Runnable
         for(int i = 0 ; i < password.length; i++)
             actual_state[i] = password[i];
 
+
+        System.out.println(Arrays.toString(actual_state));
+
     }
 
     public void initializer (int cells_number, int generations, int states_number,

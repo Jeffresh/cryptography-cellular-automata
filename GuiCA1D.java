@@ -5,10 +5,9 @@ import java.io.File;
 import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.util.HashMap;
-import java.util.LinkedHashMap;
-import java.util.Map;
-import java.util.Scanner;
+import java.util.*;
+
+import static java.nio.charset.StandardCharsets.UTF_8;
 
 /**
      * GuiTemplate.java
@@ -375,30 +374,41 @@ public class GuiCA1D extends Frame implements ActionListener, FocusListener {
     private static int cell_spatial_entropy = 499;
     private static String password = "pass";
 
-    private int[] codePassword(String password_plain){
-
-        password_plain=password_plain.replaceAll("\\s+","");
-
-        char[] messChar = password_plain.toCharArray();
-        String result = "";
-
-        for (int i = 0; i < messChar.length; i++) {
-            result += Integer.toBinaryString(messChar[i]) ;
+    private String stringToBinary(String password_plain){
+        byte[] bytes = password_plain.getBytes();
+        StringBuilder binary = new StringBuilder();
+        for (byte b : bytes)
+        {
+            int val = b;
+            for (int i = 0; i < 8; i++)
+            {
+                binary.append((val & 128) == 0 ? 0 : 1);
+                val <<= 1;
+            }
         }
 
-        messChar = result.toCharArray();
-        int[] binary_values = new int[messChar.length];
-
-        for(int j = 0 ; j < messChar.length; j++){
-            binary_values[j] = Integer.parseInt(String.valueOf(messChar[j]));
-        }
-
-//        for(int i: binary_values)
-//            System.out.println(i);
-//        System.out.println(messChar);
-
-        return binary_values;
+        return binary.toString();
     }
+
+    private String binaryToString(String binary_values){
+
+        String str = Arrays.stream(String.valueOf(binary_values).split("(?<=\\G.{8})"))
+                .parallel()
+                .map(eightBits -> (char)Integer.parseInt(eightBits, 2))
+                .collect(
+                        StringBuilder::new,
+                        StringBuilder::append,
+                        StringBuilder::append
+                ).toString();
+
+        return str;
+    }
+
+//    private String encryptMessage(String message){
+//
+//
+//
+//    }
 
 
     public void actionPerformed( ActionEvent e) {
@@ -473,7 +483,7 @@ public class GuiCA1D extends Frame implements ActionListener, FocusListener {
             System.out.println("Cell Spatial Entropy: "+cell_spatial_entropy);
             System.out.println("Password: "+password);
 
-            codePassword(password);
+            stringToBinary(password);
 
 
             canvas_template.updateCanvas();
