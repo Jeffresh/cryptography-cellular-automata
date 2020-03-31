@@ -14,6 +14,9 @@ public class Benchmark {
 
         for (int r = 0; r < 256; r++) {
             System.out.println("Processing rule: " + r + "\n");
+            mean_spatial_entropy = 0;
+            mean_hamming = 0;
+            mean_temporal_entropy = 0;
 
             for(int i = 0; i < 23; i++) {
                 aut = new CellularAutomata1D();
