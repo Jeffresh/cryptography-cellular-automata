@@ -146,6 +146,8 @@ public class CellularAutomata1D implements Runnable
         transition_function = rule;
     }
 
+    public int[] getActualState(){return actual_state;}
+
     public Double getTemporalEntropy(){
         return temporal_entropy;
     }
