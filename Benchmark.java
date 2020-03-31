@@ -1,12 +1,14 @@
+import java.io.BufferedWriter;
+import java.io.FileWriter;
+
 public class Benchmark {
 
 
     public static void main(String[] args) {
 
-        double[] maxg = new double[3];
-
-        double maxl = 0.0;
-        double enmedia = 0.0;
+        double mean_hamming = 0.0;
+        double mean_spatial_entropy=0.0;
+        double mean_temporal_entropy=0.0;
         CellularAutomata1D aut = new CellularAutomata1D();
 
 
@@ -15,7 +17,6 @@ public class Benchmark {
 
             for(int i = 0; i < 23; i++) {
                 aut = new CellularAutomata1D();
-                enmedia = 0;
                 aut.setTransitionFunction(r);
                 aut.computeRule();
                 aut.initializer(1000, 4000, 2, 1,
@@ -23,25 +24,35 @@ public class Benchmark {
 
 
                 aut.caComputation(4000);
+                mean_spatial_entropy += aut.getSpatialEntropyValue()/4000;
+                mean_hamming += aut.getHammingDistanceValue()/4000;
+                mean_temporal_entropy = aut.getTemporalEntropy();
 
             }
-            System.out.println("Procesando regla: " + r + "\n");
+            System.out.println("Processing rule: " + r + "\n");
 
 
-            maxl = aut.getTemporalEntropy();
-            enmedia = enmedia / 4000;
+            mean_spatial_entropy = mean_spatial_entropy/23;
+            mean_hamming = mean_hamming/23;
+            mean_temporal_entropy = mean_temporal_entropy/23;
 
+            if(mean_spatial_entropy > 0.85 && mean_hamming > 500 && mean_temporal_entropy > 0.9)
+            {
+                String rule = new String("Rule: "+ r+ "accepted");
 
-            if (maxl > maxg[1] && enmedia > 0.9997) {
-                maxg[0] = r;
-                maxg[1] = maxl;
-                maxg[2] = enmedia;
+                BufferedWriter rules_accepted_file = null;
+                try {
+
+                    rules_accepted_file = new BufferedWriter(new FileWriter("rules_accepted.txt",true));
+                    rules_accepted_file.append(rule).append("\n");
+                    rules_accepted_file.close();
+
+                } catch (Exception ex) {
+                    System.out.println("Exception message : " + ex.getMessage());
+                }
             }
-
         }
 
-        System.out.println("la mejor regla es: " + maxg[0] + " Con una Entropia temporal de: " + maxg[1]);
-        System.out.println("la mejor regla es: " + maxg[0] + " Con una Entropia temporal de: " + maxg[2]);
     }
 
 }
