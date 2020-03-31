@@ -13,7 +13,7 @@ public class Benchmark {
 
 
         for (int r = 0; r < 256; r++) {
-            System.out.println("Procesando regla: " + r + "\n");
+            System.out.println("Processing rule: " + r + "\n");
 
             for(int i = 0; i < 23; i++) {
                 aut = new CellularAutomata1D();
@@ -29,7 +29,7 @@ public class Benchmark {
                 mean_temporal_entropy = aut.getTemporalEntropy();
 
             }
-            System.out.println("Processing rule: " + r + "\n");
+            System.out.println("Finish processing rule: " + r + "\n");
 
 
             mean_spatial_entropy = mean_spatial_entropy/23;
